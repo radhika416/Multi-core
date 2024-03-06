@@ -1,29 +1,26 @@
 #include <stdio.h>
-#include <cilk/cilk.h>
+#include <stdlib.h>
+#include <omp.h>
 
-int fib_sequence[100]; // Assuming a maximum sequence length of 100
+#define MAX_TERMS 100
 
-// Function to compute Fibonacci sequence using Cilk's cilk_for
+int fib_sequence[MAX_TERMS]; // Assuming a maximum sequence length of 100
+
+// Function to compute Fibonacci sequence using OpenMP
 void compute_fibonacci(int n) {
     fib_sequence[0] = 0;
     fib_sequence[1] = 1;
-    cilk_for (int i = 2; i <= n; ++i) {
+    #pragma omp parallel for
+    for (int i = 2; i <= n && i < MAX_TERMS; ++i) {
         fib_sequence[i] = fib_sequence[i - 1] + fib_sequence[i - 2];
     }
 }
 
 int main() {
-    int n;
+    // Mock input
+    int n = 10; // Compute Fibonacci sequence for the first 10 terms
 
-    printf("Enter the number of Fibonacci sequence terms to compute: ");
-    scanf("%d", &n);
-
-    if (n <= 0) {
-        printf("Invalid input. Please enter a positive integer.\n");
-        return 1;
-    }
-
-    // Compute Fibonacci sequence using loop parallelism
+    // Compute Fibonacci sequence using OpenMP
     compute_fibonacci(n);
 
     // Print Fibonacci sequence
